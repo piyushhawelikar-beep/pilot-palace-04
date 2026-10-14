@@ -4,9 +4,11 @@ export const MIN_PASSWORD = 8;
 
 export function validateAuthForm(mode: AuthMode, email: string, password: string) {
   const errors: { email?: string; password?: string } = {};
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = "Enter a valid email address.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))
+    errors.email = "Enter a valid email address.";
   if (mode === "signin" && !password) errors.password = "Enter your password.";
-  if (mode === "signup" && password.length < MIN_PASSWORD) errors.password = `Use at least ${MIN_PASSWORD} characters.`;
+  if (mode === "signup" && password.length < MIN_PASSWORD)
+    errors.password = `Use at least ${MIN_PASSWORD} characters.`;
   return errors;
 }
 

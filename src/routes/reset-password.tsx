@@ -36,7 +36,8 @@ function ResetPassword() {
     e.preventDefault();
     const v = validateNewPassword(pw, confirm);
     if (v) return setError(v);
-    setBusy(true); setError("");
+    setBusy(true);
+    setError("");
     const { error } = await supabase.auth.updateUser({ password: pw });
     setBusy(false);
     if (error) return setError(error.message);
@@ -50,18 +51,48 @@ function ResetPassword() {
         <Logo />
         <h1 className="text-2xl font-semibold">Set a new password</h1>
         {loading ? (
-          <p className="flex items-center gap-2 text-sm text-muted-foreground" role="status"><Loader2 className="size-4 animate-spin" /> Verifying reset link…</p>
+          <p className="flex items-center gap-2 text-sm text-muted-foreground" role="status">
+            <Loader2 className="size-4 animate-spin" /> Verifying reset link…
+          </p>
         ) : !session ? (
           <div className="space-y-3 text-sm">
-            <p className="text-muted-foreground">This reset link is invalid or has expired. Request a new one.</p>
-            <Button asChild variant="subtle" className="w-full"><Link to="/auth">Back to sign in</Link></Button>
+            <p className="text-muted-foreground">
+              This reset link is invalid or has expired. Request a new one.
+            </p>
+            <Button asChild variant="subtle" className="w-full">
+              <Link to="/auth">Back to sign in</Link>
+            </Button>
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-4" noValidate>
-            <div className="space-y-1.5"><Label htmlFor="pw">New password</Label><Input id="pw" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} /></div>
-            <div className="space-y-1.5"><Label htmlFor="pw2">Confirm password</Label><Input id="pw2" type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} /></div>
-            {error && <p className="text-sm text-destructive" role="alert">{error}</p>}
-            <Button type="submit" variant="hero" className="w-full" disabled={busy}>{busy && <Loader2 className="animate-spin" />} Update password</Button>
+            <div className="space-y-1.5">
+              <Label htmlFor="pw">New password</Label>
+              <Input
+                id="pw"
+                type="password"
+                autoComplete="new-password"
+                value={pw}
+                onChange={(e) => setPw(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="pw2">Confirm password</Label>
+              <Input
+                id="pw2"
+                type="password"
+                autoComplete="new-password"
+                value={confirm}
+                onChange={(e) => setConfirm(e.target.value)}
+              />
+            </div>
+            {error && (
+              <p className="text-sm text-destructive" role="alert">
+                {error}
+              </p>
+            )}
+            <Button type="submit" variant="hero" className="w-full" disabled={busy}>
+              {busy && <Loader2 className="animate-spin" />} Update password
+            </Button>
           </form>
         )}
       </div>

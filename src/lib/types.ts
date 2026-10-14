@@ -1,7 +1,8 @@
 // Domain types. Shaped so real adapters (AI, sandbox, deploy) can slot in later.
 
 export type ProjectStatus = "draft" | "healthy" | "errors" | "deploying-blocked";
-export type TemplateId = "react-app" | "portfolio" | "landing" | "dashboard" | "ecommerce" | "blank";
+export type TemplateId =
+  "react-app" | "portfolio" | "landing" | "dashboard" | "ecommerce" | "blank";
 
 export interface Project {
   id: string;

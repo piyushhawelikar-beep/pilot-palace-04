@@ -19,8 +19,13 @@ export function RequireAuth({ children }: { children: ReactNode }) {
 
   if (loading || !user) {
     return (
-      <div className="grid min-h-screen place-items-center text-sm text-muted-foreground" role="status">
-        <span className="flex items-center gap-2"><Loader2 className="size-4 animate-spin" /> Checking your session…</span>
+      <div
+        className="grid min-h-screen place-items-center text-sm text-muted-foreground"
+        role="status"
+      >
+        <span className="flex items-center gap-2">
+          <Loader2 className="size-4 animate-spin" /> Checking your session…
+        </span>
       </div>
     );
   }

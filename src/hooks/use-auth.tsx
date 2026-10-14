@@ -19,7 +19,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [recovery, setRecovery] = useState(false);
 
   useEffect(() => {
-    if (supabaseConfigError) { setLoading(false); return; }
+    if (supabaseConfigError) {
+      setLoading(false);
+      return;
+    }
     let active = true;
     // Subscribe first so no event between getSession and subscription is lost.
     const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
@@ -34,7 +37,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(data.session);
       setLoading(false);
     });
-    return () => { active = false; sub.subscription.unsubscribe(); };
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
@@ -44,7 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user: session?.user ?? null, loading, recovery, signOut }}>
+    <AuthContext.Provider
+      value={{ session, user: session?.user ?? null, loading, recovery, signOut }}
+    >
       {children}
     </AuthContext.Provider>
   );
