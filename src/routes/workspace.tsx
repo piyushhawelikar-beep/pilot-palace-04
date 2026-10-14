@@ -12,7 +12,7 @@ import type { ProjectFile } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/workspace")({
-  validateSearch: (s: Record<string, unknown>): { fix?: boolean } => (s.fix === true || s.fix === "true" ? { fix: true } : {}),
+  validateSearch: (s: Record<string, unknown>): { fix?: boolean } => (s["fix"] === true || s["fix"] === "true" ? { fix: true } : {}),
   head: () => ({
     meta: [
       { title: "Workspace — DevPilot AI" },
@@ -56,7 +56,7 @@ function Workspace() {
   const problems = applied ? SAMPLE_ERRORS.filter((e) => e.id === "e4") : SAMPLE_ERRORS;
 
   const apply = () => {
-    setFiles((fs) => [...fs.map((f) => (PATCHED_FILES[f.path] ? { ...f, content: PATCHED_FILES[f.path](f.content) } : f)), NEW_FILE]);
+    setFiles((fs) => [...fs.map((f) => { const p = PATCHED_FILES[f.path]; return p ? { ...f, content: p(f.content) } : f; }), NEW_FILE]);
     setApplied(true); log("[fix] patch applied to 3 sample files (not verified)");
   };
   const revert = () => {
