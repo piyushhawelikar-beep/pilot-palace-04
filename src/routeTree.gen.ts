@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DeployRouteImport } from './routes/deploy'
 import { Route as PricingRouteImport } from './routes/pricing'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SetupRouteImport } from './routes/setup'
 import { Route as WorkspaceRouteImport } from './routes/workspace'
@@ -43,6 +44,11 @@ const PricingRoute = PricingRouteImport.update({
   path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/deploy': typeof DeployRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/setup': typeof SetupRoute
   '/workspace': typeof WorkspaceRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/deploy': typeof DeployRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/setup': typeof SetupRoute
   '/workspace': typeof WorkspaceRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/deploy': typeof DeployRoute
   '/pricing': typeof PricingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRoute
   '/setup': typeof SetupRoute
   '/workspace': typeof WorkspaceRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deploy'
     | '/pricing'
+    | '/reset-password'
     | '/settings'
     | '/setup'
     | '/workspace'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deploy'
     | '/pricing'
+    | '/reset-password'
     | '/settings'
     | '/setup'
     | '/workspace'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/dashboard'
     | '/deploy'
     | '/pricing'
+    | '/reset-password'
     | '/settings'
     | '/setup'
     | '/workspace'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   DeployRoute: typeof DeployRoute
   PricingRoute: typeof PricingRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRoute
   SetupRoute: typeof SetupRoute
   WorkspaceRoute: typeof WorkspaceRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   DeployRoute: DeployRoute,
   PricingRoute: PricingRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRoute,
   SetupRoute: SetupRoute,
   WorkspaceRoute: WorkspaceRoute,
