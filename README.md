@@ -24,6 +24,46 @@ This project was built with [Lovable](https://lovable.dev).
 
 **Live app**: https://pilot-palace-04.lovable.app
 
+## Authentication setup (email/password)
+
+DevPilot AI uses a single browser auth client in `src/lib/supabase.ts`.
+
+### Environment variables
+| Name | Purpose |
+| --- | --- |
+| `VITE_SUPABASE_URL` | Your project URL |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | Publishable (anon) key — safe for the browser |
+
+Never put a service-role/secret key in any `VITE_` variable or in frontend code. If either variable is missing, the sign-in page shows a configuration error instead of crashing.
+
+### Auth dashboard configuration
+1. **Authentication → Providers → Email**: enable Email provider. Keep "Confirm email" ON for production.
+2. **Authentication → URL Configuration**:
+   - Site URL: your published URL (e.g. `https://pilot-palace-04.lovable.app`).
+   - Redirect URLs (add every origin you use, preview + published + custom domain):
+     - `https://<your-origin>/dashboard` (after email confirmation)
+     - `https://<your-origin>/reset-password` (password recovery)
+3. **Email templates**: the default confirm-signup and reset-password templates work; they use the redirect URLs above.
+
+### Routes
+- `/auth` — sign in, sign up, forgot password (public)
+- `/reset-password` — set a new password from the email link (public)
+- `/dashboard`, `/workspace`, `/deploy`, `/settings` — protected
+
+Protection is **client-side**: the session lives in browser storage, so the server renders a "checking session" state and the browser redirects signed-out users to `/auth`. This guards UI only. Any future server data must verify the user's token server-side.
+
+### Data honesty
+Signing in does **not** make project data server-backed. Projects, sample data and feedback are still in browser `localStorage` and do not sync across devices. When user-owned tables are introduced, each must have Row Level Security policies scoped with `auth.uid()` (e.g. `user_id = auth.uid()`). No tables or policies were created by this change.
+
+### Manual test checklist
+- [ ] Visit `/dashboard` signed out → redirected to `/auth`
+- [ ] Sign up → "Check your email" shown, no dashboard redirect
+- [ ] Click confirmation link → lands on `/dashboard`, email shown in header
+- [ ] Sign out → back on `/auth`; Back button doesn't show the dashboard
+- [ ] Wrong password → error message shown
+- [ ] Forgot password → email received → `/reset-password` → new password works
+- [ ] Expired/opened-twice reset link → "invalid or expired" message
+
 ## Build with Lovable
 
 Continue developing this project in the [Lovable editor](https://lovable.dev/projects/aac00f46-747d-431c-8526-9e3dfc35cc44).
