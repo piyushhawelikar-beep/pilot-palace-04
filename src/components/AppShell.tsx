@@ -1,6 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
-import { BookOpen, CreditCard, Code2, LayoutGrid, Menu, MessageSquare, Rocket, Settings, X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { BookOpen, CreditCard, Code2, LayoutGrid, LogOut, Menu, MessageSquare, Rocket, Settings, X } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
+import { RequireAuth } from "./RequireAuth";
 import { Logo } from "./Logo";
 import { FeedbackDialog } from "./FeedbackDialog";
 import { Button } from "@/components/ui/button";
@@ -14,8 +18,26 @@ const NAV = [
   { to: "/setup", label: "Docs & setup", icon: BookOpen },
 ] as const;
 
-export function AppShell({ title, actions, children }: { title: string; actions?: ReactNode; children: ReactNode }) {
+export function AppShell(props: { title: string; actions?: ReactNode; children: ReactNode; protect?: boolean }) {
+  if (props.protect === false) return <Shell {...props} />;
+  return <RequireAuth><Shell {...props} /></RequireAuth>;
+}
+
+function Shell({ title, actions, children }: { title: string; actions?: ReactNode; children: ReactNode }) {
   const [open, setOpen] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleSignOut = async () => {
+    setSigningOut(true);
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    try { await signOut(); } catch { toast.error("Sign out failed. Please try again."); setSigningOut(false); return; }
+    navigate({ to: "/auth", replace: true });
+  };
+
   const nav = (
     <nav className="flex flex-col gap-1" aria-label="App">
       {NAV.map(({ to, label, icon: Icon }) => (
@@ -31,9 +53,8 @@ export function AppShell({ title, actions, children }: { title: string; actions?
     <div className="mt-auto space-y-3">
       <FeedbackDialog trigger={<Button variant="ghost" size="sm" className="w-full justify-start"><MessageSquare /> Send feedback</Button>} />
       <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 text-xs text-muted-foreground">
-        <p className="font-medium text-warning">Local demo workspace</p>
-        Accounts aren't configured yet. Projects you create are saved in this browser only.
-        <Link to="/auth" className="mt-2 block text-cyan hover:underline">Sign-in status →</Link>
+        <p className="font-medium text-warning">Demo project data</p>
+        Your account is real, but projects and sample data are still saved in this browser only — not synced to your account.
       </div>
     </div>
   );
@@ -55,7 +76,17 @@ export function AppShell({ title, actions, children }: { title: string; actions?
         <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/85 px-4 backdrop-blur md:px-6">
           <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu" onClick={() => setOpen(true)}><Menu /></Button>
           <h1 className="truncate text-base font-semibold">{title}</h1>
-          <div className="ml-auto flex items-center gap-2">{actions}</div>
+          <div className="ml-auto flex items-center gap-2">
+            {actions}
+            {user ? (
+              <>
+                <span className="hidden max-w-[180px] truncate text-xs text-muted-foreground md:inline" title={user.email ?? ""}>{user.email}</span>
+                <Button variant="ghost" size="sm" onClick={handleSignOut} disabled={signingOut} aria-label="Sign out"><LogOut /><span className="hidden sm:inline">Sign out</span></Button>
+              </>
+            ) : (
+              <Button asChild variant="subtle" size="sm"><Link to="/auth">Sign in</Link></Button>
+            )}
+          </div>
         </header>
         <main className="min-w-0 flex-1 p-4 md:p-6">{children}</main>
       </div>
